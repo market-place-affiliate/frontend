@@ -92,7 +92,13 @@ const setCookie = (name: string, value: string, days: number = 7) => {
   if (typeof document === 'undefined') return;
   const expires = new Date();
   expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
-  document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/;SameSite=Strict`;
+  
+  // For cross-subdomain support, use SameSite=None with Secure flag
+  // Note: Requires HTTPS in production
+  const isProduction = window.location.protocol === 'https:';
+  const sameSite = isProduction ? 'None; Secure' : 'Lax';
+  
+  document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/;SameSite=${sameSite}`;
 };
 
 const getCookie = (name: string): string | null => {
