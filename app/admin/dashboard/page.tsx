@@ -461,7 +461,8 @@ export default function DashboardPage() {
     }
 
     try {
-      // Format dates with local timezone offset
+      // Format dates with local timezone offset in RFC3339 format
+      // Example: 2006-01-02T15:04:05Z07:00
       const formatDateWithTimezone = (dateString: string) => {
         const date = new Date(dateString);
         const offset = -date.getTimezoneOffset();
@@ -473,8 +474,8 @@ export default function DashboardPage() {
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
         const day = date.getDate().toString().padStart(2, '0');
         
-        // Return format: YYYY-MM-DD 00:00:00 +07:00 (with local timezone)
-        return `${year}-${month}-${day} 00:00:00 ${offsetSign}${offsetHours}:${offsetMinutes}`;
+        // Return RFC3339 format: 2006-01-02T00:00:00+07:00
+        return `${year}-${month}-${day}T00:00:00${offsetSign}${offsetHours}:${offsetMinutes}`;
       };
 
       // Call API to create campaign
