@@ -197,7 +197,7 @@ export default function DashboardPage() {
 
         try {
           const metricsResponse = await fetch(
-            `http://localhost:8080/api/v1/dashboard/metrics?start_at=${startDateStr}&end_at=${endDateStr}`,
+            `${process.env.NEXT_PUBLIC_API_URL}/api/v1/dashboard/metrics?start_at=${startDateStr}&end_at=${endDateStr}`,
             {
               credentials: 'include',
               headers: {
@@ -419,7 +419,7 @@ export default function DashboardPage() {
 
     try {
       const token = getAuthToken();
-      const response = await fetch(`http://localhost:8080/api/v1/link/${linkId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/link/${linkId}`, {
         method: 'DELETE',
         credentials: 'include',
         headers: {
@@ -495,7 +495,7 @@ export default function DashboardPage() {
         // Create links for all selected products
         const token = getAuthToken();
         const linkPromises = selectedProducts.map(async (productId) => {
-          const response = await fetch('http://localhost:8080/api/v1/link', {
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/link`, {
             method: 'POST',
             credentials: 'include',
             headers: {

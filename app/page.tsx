@@ -44,7 +44,7 @@ export default function Home() {
     const fetchData = async () => {
       try {
         // Fetch available campaigns
-        const campaignsResponse = await fetch('http://localhost:8080/api/v1/campaign/available');
+        const campaignsResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/campaign/available`);
         const campaignsResult = await campaignsResponse.json();
 
         if (campaignsResult.success && campaignsResult.data) {
@@ -54,7 +54,7 @@ export default function Home() {
           for (const campaign of campaignsData) {
             try {
               const linksResponse = await fetch(
-                `http://localhost:8080/api/v1/link/campaign/${campaign.id}`
+                `${process.env.NEXT_PUBLIC_API_URL}/api/v1/link/campaign/${campaign.id}`
               );
               const linksResult = await linksResponse.json();
 
@@ -66,7 +66,7 @@ export default function Home() {
                   for (const link of campaign.links) {
                     try {
                       const productResponse = await fetch(
-                        `http://localhost:8080/api/v1/product/${link.ProductId}`
+                        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/product/${link.ProductId}`
                       );
                       const productResult = await productResponse.json();
 

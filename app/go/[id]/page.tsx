@@ -17,13 +17,13 @@ export default function RedirectPage() {
       try {
         // Verify the short code exists
         const verifyResponse = await fetch(
-          `http://localhost:8080/api/v1/link/short-code/${shortCode}`
+          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/link/short-code/${shortCode}`
         );
         const result = await verifyResponse.json();
 
         if (verifyResponse.ok && result.success && result.data) {
           // Redirect to the redirect endpoint
-          window.location.href = `http://localhost:8080/api/v1/link/redirect/${shortCode}`;
+          window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/link/redirect/${shortCode}`;
         } else {
           console.error('Invalid short code:', result.message || 'Unknown error');
           // Optionally redirect to a 404 page
