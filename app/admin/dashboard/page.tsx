@@ -23,8 +23,8 @@ export default function DashboardPage() {
   const [lazadaCredentialSet, setLazadaCredentialSet] = useState(false);
 
   // URL submission state
-  const [shopeeUrlInput, setShopeeUrlInput] = useState('https://shopee.co.th/Dr.PONG-Daily-Omega-3-odourless-fish-oil-1000-mg-plus-vitamin-E-%E0%B9%82%E0%B8%AD%E0%B9%80%E0%B8%A1%E0%B8%81%E0%B9%89%E0%B8%B2-3-%E0%B9%82%E0%B8%AD%E0%B9%80%E0%B8%94%E0%B8%AD%E0%B8%A3%E0%B9%8C%E0%B9%80%E0%B8%A5%E0%B8%AA-%E0%B8%9F%E0%B8%B4%E0%B8%8A%E0%B8%AD%E0%B8%AD%E0%B8%A2%E0%B8%A5%E0%B9%8C-%E0%B8%99%E0%B9%89%E0%B8%B3%E0%B8%A1%E0%B8%B1%E0%B8%99%E0%B8%9B%E0%B8%A5%E0%B8%B2-i.6583190.18377662250?extraParams=%7B%22display_model_id%22%3A231393051066%7D');
-  const [lazadaUrlInput, setLazadaUrlInput] = useState('https://www.lazada.co.th/products/pdp-i5869971098-s25008153222.html?spm=a2o4m.10453683.0.0.568967adFZSkmy&search=store&mp=3');
+  const [shopeeUrlInput, setShopeeUrlInput] = useState('');
+  const [lazadaUrlInput, setLazadaUrlInput] = useState('');
 
   // Products state
   const [products, setProducts] = useState<Array<{id: string; title: string; image_url: string; offer?: {id: string; marketplace: string; store_name: string; price: number}}>>([]);
