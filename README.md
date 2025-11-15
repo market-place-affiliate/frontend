@@ -1,5 +1,10 @@
 # Affiliate Management Platform
 
+
+Demo URL : https://frontend-production-1105.up.railway.app
+Admin Access: https://frontend-production-1105.up.railway.app/admin
+
+
 A Next.js 16 application for managing Shopee and Lazada affiliate campaigns with email/password authentication.
 
 ## Features
