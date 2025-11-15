@@ -461,12 +461,28 @@ export default function DashboardPage() {
     }
 
     try {
+      // Format dates with local timezone offset
+      const formatDateWithTimezone = (dateString: string) => {
+        const date = new Date(dateString);
+        const offset = -date.getTimezoneOffset();
+        const offsetHours = Math.floor(Math.abs(offset) / 60).toString().padStart(2, '0');
+        const offsetMinutes = (Math.abs(offset) % 60).toString().padStart(2, '0');
+        const offsetSign = offset >= 0 ? '+' : '-';
+        
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        
+        // Return format: YYYY-MM-DD 00:00:00 +07:00 (with local timezone)
+        return `${year}-${month}-${day} 00:00:00 ${offsetSign}${offsetHours}:${offsetMinutes}`;
+      };
+
       // Call API to create campaign
       const response = await api.createCampaign({
         name: campaignName,
         utm_campaign: utmCampaign,
-        start_at: new Date(startDate).toISOString(),
-        end_at: new Date(endDate).toISOString(),
+        start_at: formatDateWithTimezone(startDate),
+        end_at: formatDateWithTimezone(endDate),
       });
 
       if (response.success && response.data) {
