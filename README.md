@@ -57,7 +57,7 @@ This application connects to an external API for authentication and data managem
 The following endpoints are expected from the backend API:
 
 #### Authentication
-- `POST /api/auth/register` - Register new user
+- `POST /api/v1/user/register` - Register new user
   ```json
   {
     "email": "user@example.com",
@@ -65,7 +65,7 @@ The following endpoints are expected from the backend API:
   }
   ```
   
-- `POST /api/auth/login` - Login user
+- `POST /api/v1/user/login` - Login user
   ```json
   {
     "email": "user@example.com",
@@ -73,20 +73,44 @@ The following endpoints are expected from the backend API:
   }
   ```
   
-- `POST /api/auth/logout` - Logout user
-- `GET /api/auth/me` - Get current user info
+- `GET /api/v1/user/me` - Get current user info
+
+#### Campaigns
+- `GET /api/v1/campaign/available` - Get all available campaigns
+- `GET /api/v1/campaign` - Get user's campaigns (authenticated)
+- `POST /api/v1/campaign` - Create new campaign (authenticated)
+- `DELETE /api/v1/campaign/:id` - Delete campaign (authenticated)
+
+#### Links
+- `GET /api/v1/link/campaign/:campaignId` - Get links for a campaign
+- `GET /api/v1/link/short-code/:shortCode` - Verify short code exists
+- `GET /api/v1/link/redirect/:shortCode` - Redirect to target URL (increments click count)
+- `POST /api/v1/link` - Create new link (authenticated)
+- `DELETE /api/v1/link/:id` - Delete link (authenticated)
+
+#### Products
+- `GET /api/v1/product` - Get all products (authenticated)
+- `GET /api/v1/product/:id` - Get product details
+- `GET /api/v1/product/:id/offer` - Get product offers
+- `POST /api/v1/product` - Create product from URL (authenticated)
+- `DELETE /api/v1/product/:id` - Delete product (authenticated)
+
+#### Marketplace Credentials
+- `POST /api/v1/market/credential` - Save marketplace credentials (authenticated)
+- `GET /api/v1/market/credential/:platform` - Check if credentials exist (authenticated)
+
+#### Dashboard Metrics
+- `GET /api/v1/dashboard/metrics?start_at=YYYY-MM-DD&end_at=YYYY-MM-DD` - Get dashboard metrics (authenticated)
 
 #### Expected Response Format
 ```json
 {
   "success": true,
+  "code": 0,
+  "message": "Success message",
+  "txn_id": "transaction_id",
   "data": {
-    "token": "jwt_token_here",
-    "user": {
-      "id": "user_id",
-      "email": "user@example.com",
-      "name": "User Name"
-    }
+    // Response data here
   }
 }
 ```
@@ -105,77 +129,154 @@ You can configure the API URL in two ways:
 
 ## Usage
 
-### 1. Register an Account
-- Navigate to the homepage
-- Click "Get Started - Register"
-- Enter your email and password
-- Click "Register"
+### Public Users (Homepage)
 
-### 2. Set Up Affiliate Credentials
-- After login, you'll be on the dashboard
-- Fill in your Shopee credentials (App ID and Secret)
-- Fill in your Lazada credentials (App Key, App Secret, User Token)
-- Click "Save Credentials"
+#### Browse Available Campaigns
+- Visit the homepage to see all available affiliate campaigns
+- Each campaign displays:
+  - Campaign name and description
+  - Associated products with images, names, and prices
+  - Product cards are clickable and lead to short URLs
 
-### 3. Submit Product URLs
-- Enter a product URL from Shopee or Lazada
-- Select the platform (Shopee/Lazada)
-- Click "Submit URL"
+#### Access Affiliate Links
+- Click on any product card to visit its affiliate link
+- Short URLs follow the format: `/go/:short_code`
+- Each click is tracked for analytics
 
-### 4. Create Campaigns
-- Click "Create Campaign" next to any submitted URL
+### Admin Users (Dashboard)
+
+#### 1. Authentication
+- Navigate to `/admin/auth/login` to access the admin dashboard
+- Enter your registered email and password
+- Upon successful login, you'll be redirected to `/admin/dashboard`
+
+#### 2. Dashboard Overview
+- View key metrics and analytics:
+  - Top performing product with click count
+  - Historical click data with interactive charts (last 7 days)
+  - Breakdown by campaign and marketplace
+  - Daily click trends
+
+#### 3. Manage Marketplace Credentials
+- Set up Shopee credentials:
+  - App ID
+  - App Secret
+- Set up Lazada credentials:
+  - App Key
+  - App Secret
+  - User Token
+- Click "Save Credentials" to enable product URL processing
+
+#### 4. Add Products
+- **Shopee Products:**
+  - Enter a Shopee product URL
+  - Click "Add Product" to fetch product details
+- **Lazada Products:**
+  - Enter a Lazada product URL
+  - Click "Add Product" to fetch product details
+- Products are automatically saved and displayed with:
+  - Product image
+  - Product name
+  - Price information
+  - Marketplace badge (Shopee/Lazada)
+
+#### 5. Create Campaigns
 - Fill in campaign details:
   - Campaign Name (required)
   - Start Date (required)
   - End Date (required)
-  - UTM Parameters (optional but recommended)
-- Click "Create Campaign"
+  - UTM Campaign (optional)
+- Select one or more products from your product list
+- Click "Create Campaign" button
+- System automatically:
+  - Creates the campaign
+  - Generates short URLs for each selected product
+  - Displays success message with number of links created
 
-### 5. View Campaigns
-- All created campaigns are displayed in the "My Campaigns" section
-- Each campaign shows URL, dates, and UTM parameters
+#### 6. View and Manage Campaigns
+- All campaigns are listed with:
+  - Campaign name and dates
+  - Associated product links
+  - Each link shows:
+    - Target URL (full affiliate link)
+    - Short code (clickable, e.g., `ABC123`)
+    - Click count
+    - Created date
+- Click short codes to test redirect at `/go/:short_code`
+- Delete individual links using the trash icon
+- Delete entire campaigns with the delete button
+
+#### 7. Track Performance
+- Monitor metrics in the dashboard overview:
+  - Top product performance
+  - Click trends over time
+  - Campaign comparison
+  - Marketplace performance (Shopee vs Lazada)
 
 ## Project Structure
 
 ```
-frontend-backoffice-side/
+frontend/
 ├── app/
+│   ├── admin/
+│   │   └── dashboard/
+│   │       └── page.tsx    # Admin dashboard with full CRUD operations
 │   ├── auth/
-│   │   ├── login/          # Login page
-│   │   └── register/       # Registration page
-│   ├── dashboard/          # Main dashboard
+│   │   ├── login/
+│   │   │   └── page.tsx    # Admin login page
+│   │   └── register/
+│   │       └── page.tsx    # Admin registration page
+│   ├── go/
+│   │   └── [id]/
+│   │       └── page.tsx    # Short code redirect handler
 │   ├── layout.tsx          # Root layout
-│   ├── page.tsx            # Homepage
+│   ├── page.tsx            # Public homepage (campaign listing)
 │   └── globals.css         # Global styles
 ├── lib/
-│   ├── auth.ts             # Authentication utilities
+│   ├── auth.ts             # Authentication utilities (JWT token management)
 │   └── storage.ts          # LocalStorage utilities
 ├── types/
 │   └── index.ts            # TypeScript type definitions
 ├── public/                 # Static assets
+├── .env.local              # Environment variables (NEXT_PUBLIC_API_URL)
 └── package.json
 ```
 
-## Security Notice
+## Security Considerations
 
-⚠️ **This is a demo/prototype application**
+⚠️ **Important Security Notes**
 
-This application stores credentials in browser localStorage, which is **NOT secure for production use**. 
+### Authentication
+- JWT tokens are stored in browser cookies (not localStorage)
+- Cookie settings: 7-day expiration, SameSite=Strict, path=/
+- Tokens are sent via cookies and Authorization headers
+- Admin routes are protected with authentication checks
 
-See [SECURITY.md](./SECURITY.md) for detailed security considerations and production recommendations.
+### Environment Variables
+- API URL is configured via `NEXT_PUBLIC_API_URL` environment variable
+- Never commit `.env.local` file to version control
+- Use different API URLs for development, staging, and production
 
-## Learn More
+### Best Practices for Production
+- Enable HTTPS for all API communications
+- Implement rate limiting on API endpoints
+- Use secure, HTTP-only cookies for token storage (recommended over localStorage)
+- Implement CSRF protection
+- Add input validation and sanitization
+- Set up proper CORS policies
+- Enable security headers (CSP, HSTS, etc.)
+- Regularly update dependencies for security patches
 
-To learn more about Next.js, take a look at the following resources:
+### Data Privacy
+- Marketplace credentials (Shopee/Lazada API keys) are stored on the backend
+- Sensitive data should be encrypted at rest
+- Implement proper access controls and user permissions
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## License
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+MIT License - feel free to use this project for your own purposes.
 
-## Deploy on Vercel
+## Contributing
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Contributions are welcome! Please feel free to submit a Pull Request.
 
