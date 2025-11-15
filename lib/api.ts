@@ -125,23 +125,23 @@ class ApiClient {
   ): Promise<ApiResponse<T>> {
     const url = `${this.baseUrl}${endpoint}`;
     
-    const config: RequestInit = {
-      ...options,
-      credentials: 'include', // Include cookies in requests
-      headers: {
-        'Content-Type': 'application/json',
-        ...options.headers,
-      },
+    // Build headers object
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+      ...options.headers,
     };
 
     // Add auth token if available
     const token = getCookie(TOKEN_KEY);
     if (token) {
-      config.headers = {
-        ...config.headers,
-        Authorization: `Bearer ${token}`,
-      };
+      (headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
     }
+
+    const config: RequestInit = {
+      ...options,
+      credentials: 'include', // Include cookies in requests
+      headers,
+    };
 
     try {
       const response = await fetch(url, config);
