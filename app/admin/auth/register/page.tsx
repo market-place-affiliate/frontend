@@ -3,12 +3,13 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { verifyPassword } from '@/lib/auth';
+import { api, saveAuthToken } from '@/lib/api';
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -16,40 +17,39 @@ export default function LoginPage() {
     e.preventDefault();
     setError('');
 
-    if (!email || !password) {
+    if (!email || !password || !confirmPassword) {
       setError('All fields are required');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters');
       return;
     }
 
     setLoading(true);
 
     try {
-      // Get users from localStorage
-      const usersStr = localStorage.getItem('users');
-      const users: Array<{ email: string; password: string }> = usersStr ? JSON.parse(usersStr) : [];
+      const response = await api.register({ email, password });
 
-      // Find user
-      const user = users.find((u) => u.email === email);
-      if (!user) {
-        setError('Invalid email or password');
+      if (!response.success || !response.data) {
+        setError(response.error || 'Registration failed');
         setLoading(false);
         return;
       }
 
-      // Verify password
-      const isValid = await verifyPassword(password, user.password);
-      if (!isValid) {
-        setError('Invalid email or password');
-        setLoading(false);
-        return;
-      }
+      // Save JWT token in cookie
+      saveAuthToken(response.data);
 
-      // Set current user
-      localStorage.setItem('currentUserEmail', email);
-
-      router.push('/dashboard');
+      // Redirect to dashboard after successful registration
+      router.push('/admin/dashboard');
     } catch {
-      setError('Login failed. Please try again.');
+      setError('Registration failed. Please try again.');
       setLoading(false);
     }
   };
@@ -59,7 +59,7 @@ export default function LoginPage() {
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
+            Create Admin Account
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             Affiliate Management Platform
@@ -96,12 +96,28 @@ export default function LoginPage() {
                 id="password"
                 name="password"
                 type="password"
-                autoComplete="current-password"
+                autoComplete="new-password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Password"
+              />
+            </div>
+            <div>
+              <label htmlFor="confirm-password" className="sr-only">
+                Confirm Password
+              </label>
+              <input
+                id="confirm-password"
+                name="confirm-password"
+                type="password"
+                autoComplete="new-password"
+                required
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Confirm password"
               />
             </div>
           </div>
@@ -112,16 +128,16 @@ export default function LoginPage() {
               disabled={loading}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400"
             >
-              {loading ? 'Signing in...' : 'Sign in'}
+              {loading ? 'Creating account...' : 'Register'}
             </button>
           </div>
 
           <div className="text-center">
             <Link
-              href="/auth/register"
+              href="/admin/auth/login"
               className="text-indigo-600 hover:text-indigo-500"
             >
-              Don&apos;t have an account? Register
+              Already have an account? Sign in
             </Link>
           </div>
         </form>

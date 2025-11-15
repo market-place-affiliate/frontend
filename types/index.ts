@@ -17,15 +17,22 @@ export interface AffiliateCredentials {
 
 export interface Campaign {
   id: string;
-  url: string;
   name: string;
   startDate: string;
   endDate: string;
-  utmSource: string;
-  utmMedium: string;
   utmCampaign: string;
-  platform: 'shopee' | 'lazada';
   createdAt: string;
+  links?: CampaignLink[];
+}
+
+export interface CampaignLink {
+  id: string;
+  ProductId: string;
+  CampaignId: string;
+  short_code: string;
+  target_url: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface URLSubmission {

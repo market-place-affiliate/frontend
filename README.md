@@ -4,7 +4,7 @@ A Next.js 16 application for managing Shopee and Lazada affiliate campaigns with
 
 ## Features
 
-- **User Authentication**: Email and password registration/login with bcrypt password hashing
+- **User Authentication**: Email and password registration/login with API integration
 - **Affiliate Credentials Management**: Store and manage Shopee and Lazada API credentials
 - **URL Submission**: Submit product URLs from Shopee and Lazada platforms
 - **Campaign Creation**: Create campaigns with UTM parameters for tracking
@@ -20,25 +20,88 @@ A Next.js 16 application for managing Shopee and Lazada affiliate campaigns with
 
 ## Getting Started
 
-First, install dependencies:
+### 1. Install Dependencies
 
 ```bash
 npm install
 ```
 
-Then, run the development server:
+### 2. Environment Setup
+
+Create a `.env.local` file in the root directory:
+
+```bash
+cp .env.example .env.local
+```
+
+Edit `.env.local` and set your API URL:
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8080
+```
+
+### 3. Run Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## API Integration
+
+This application connects to an external API for authentication and data management.
+
+### API Endpoints
+
+The following endpoints are expected from the backend API:
+
+#### Authentication
+- `POST /api/auth/register` - Register new user
+  ```json
+  {
+    "email": "user@example.com",
+    "password": "password123"
+  }
+  ```
+  
+- `POST /api/auth/login` - Login user
+  ```json
+  {
+    "email": "user@example.com",
+    "password": "password123"
+  }
+  ```
+  
+- `POST /api/auth/logout` - Logout user
+- `GET /api/auth/me` - Get current user info
+
+#### Expected Response Format
+```json
+{
+  "success": true,
+  "data": {
+    "token": "jwt_token_here",
+    "user": {
+      "id": "user_id",
+      "email": "user@example.com",
+      "name": "User Name"
+    }
+  }
+}
+```
+
+### Configuration
+
+You can configure the API URL in two ways:
+
+1. **Environment Variable** (Recommended):
+   ```env
+   NEXT_PUBLIC_API_URL=http://localhost:8080
+   ```
+
+2. **Default Fallback**: 
+   If no environment variable is set, it defaults to `http://localhost:8080`
 
 ## Usage
 

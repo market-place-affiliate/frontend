@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import { User } from '@/types';
+import { getAuthToken, api } from './api';
 
 const SALT_ROUNDS = 10;
 
@@ -15,37 +16,38 @@ export async function verifyPassword(
 }
 
 export function getStoredUser(): User | null {
-  if (typeof window === 'undefined') return null;
-  const userStr = localStorage.getItem('user');
-  return userStr ? JSON.parse(userStr) : null;
+  // Deprecated: Use api.getCurrentUser() instead
+  return null;
 }
 
 export function storeUser(user: User): void {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem('user', JSON.stringify(user));
+  // Deprecated: User data is fetched from API
 }
 
 export function removeUser(): void {
-  if (typeof window === 'undefined') return;
-  localStorage.removeItem('user');
+  // Deprecated: Auth token is managed by clearAuth()
 }
 
 export function isAuthenticated(): boolean {
-  if (typeof window === 'undefined') return false;
-  return localStorage.getItem('currentUserEmail') !== null;
+  return getAuthToken() !== null;
 }
 
-export function getCurrentUser(): string | null {
-  if (typeof window === 'undefined') return null;
-  return localStorage.getItem('currentUserEmail');
+export async function getCurrentUser(): Promise<string | null> {
+  try {
+    const response = await api.getCurrentUser();
+    if (response.success && response.data) {
+      return response.data.email || response.data.username || null;
+    }
+    return null;
+  } catch {
+    return null;
+  }
 }
 
 export function setCurrentUser(email: string): void {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem('currentUserEmail', email);
+  // Deprecated: User data is managed by API
 }
 
 export function clearCurrentUser(): void {
-  if (typeof window === 'undefined') return;
-  localStorage.removeItem('currentUserEmail');
+  // Deprecated: Use clearAuth() from api.ts
 }
