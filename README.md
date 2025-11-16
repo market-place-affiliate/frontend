@@ -3,7 +3,7 @@
 
 Demo URL : https://frontend-production-1105.up.railway.app
 Admin Access: https://frontend-production-1105.up.railway.app/admin
-
+Demo : https://drive.google.com/file/d/1MMk6LThe3jDHzRwqLnVHJ5R6vYDm1Wmy/view
 
 A Next.js 16 application for managing Shopee and Lazada affiliate campaigns with email/password authentication.
 
