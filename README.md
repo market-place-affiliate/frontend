@@ -285,3 +285,17 @@ MIT License - feel free to use this project for your own purposes.
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
+## Demo
+![First time](zdemo/Screenshot%202568-11-16%20at%2004.41.54.png)
+
+![Config marketplace credential](zdemo/Screenshot%202568-11-16%20at%2007.07.30.png)
+
+![Add product](zdemo/Screenshot%202568-11-16%20at%2007.08.56.png)
+
+![Create campaign](zdemo/Screenshot%202568-11-16%20at%2007.09.51.png)
+
+![Generate link](zdemo/Screenshot%202568-11-16%20at%2007.10.03.png)
+
+![Publish](zdemo/Screenshot%202568-11-16%20at%2007.10.22.png)
+
+![Simple analyt](zdemo/Screenshot%202568-11-16%20at%2007.07.11.png)
