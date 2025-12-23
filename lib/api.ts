@@ -1,5 +1,5 @@
 // API Configuration
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+const API_URL = "https://api-marketplace.blax-cat.com"//process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
 // Token management using cookies instead of localStorage
 const TOKEN_KEY = 'auth_token';
